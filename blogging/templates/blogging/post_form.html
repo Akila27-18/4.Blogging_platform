@@ -1,0 +1,24 @@
+
+{% extends 'blogging/base.html' %}
+{% block title %}{% if form.instance.pk %}Edit Post{% else %}New Post{% endif %}{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h3 class="h5 mb-3">{% if form.instance.pk %}Edit Post{% else %}Create a New Post{% endif %}</h3>
+    <form method="post" enctype="multipart/form-data" class="row g-3">
+      {% csrf_token %}
+      <div class="col-12">{{ form.title.label_tag }} {{ form.title }}</div>
+      <div class="col-12">{{ form.content.label_tag }} {{ form.content }}</div>
+      <div class="col-12">{{ form.image.label_tag }} {{ form.image }}</div>
+      <div class="col-12">
+        <label class="form-label">Categories</label>
+        {{ form.categories }}
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary">Save</button>
+        <a href="{% url 'post_list' %}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

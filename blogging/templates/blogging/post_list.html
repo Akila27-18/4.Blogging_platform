@@ -1,0 +1,63 @@
+
+{% extends 'blogging/base.html' %}
+{% block title %}All Posts{% endblock %}
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+  <h2 class="m-0">Latest Posts</h2>
+  <form method="get" class="d-flex gap-2" role="search">
+    {{ search_form.query }}
+    <button class="btn btn-outline-primary" type="submit">Search</button>
+  </form>
+</div>
+
+<div class="mb-3">
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{% url 'post_list' %}" class="badge rounded-pill text-bg-secondary text-decoration-none px-3 py-2">All</a>
+    {% for cat in categories %}
+      <a href="?category={{ cat.name }}" class="badge rounded-pill text-bg-primary text-decoration-none px-3 py-2">{{ cat.name }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="row g-4">
+  {% for post in posts %}
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100 shadow-sm">
+      {% if post.image %}
+      <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text text-muted small mb-2">By {{ post.author.username }} · {{ post.created_at|date:"M d, Y" }}</p>
+        <p class="card-text flex-grow-1">{{ post.content|truncatewords:25 }}</p>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <a href="{{ post.get_absolute_url }}" class="btn btn-primary btn-sm">Read More</a>
+          {% if user == post.author or user.is_staff %}
+          <div class="btn-group">
+            <a href="{% url 'post_update' post.slug %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+            <a href="{% url 'post_delete' post.slug %}" class="btn btn-outline-danger btn-sm">Delete</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="alert alert-info">No posts yet.</div></div>
+  {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-4">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">Previous</a></li>
+    {% endif %}
+    <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+    {% if page_obj.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">Next</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

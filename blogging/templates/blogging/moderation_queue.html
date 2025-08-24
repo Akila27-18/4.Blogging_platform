@@ -1,0 +1,23 @@
+
+{% extends 'blogging/base.html' %}
+{% block title %}Moderation Queue{% endblock %}
+{% block content %}
+<h3 class="mb-3">Pending Comments</h3>
+<div class="list-group">
+  {% for c in pending %}
+  <div class="list-group-item">
+    <div class="d-flex justify-content-between">
+      <div>
+        <div class="small text-muted">{{ c.created_at|date:"M d, Y H:i" }} on <a href="{{ c.post.get_absolute_url }}">{{ c.post.title }}</a> by {{ c.user.username }}</div>
+        <div class="mt-2">{{ c.text|linebreaks }}</div>
+      </div>
+      <div class="ms-3">
+        <a href="{% url 'approve_comment' c.pk %}" class="btn btn-success btn-sm">Approve</a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="alert alert-info">No pending comments.</div>
+  {% endfor %}
+</div>
+{% endblock %}
